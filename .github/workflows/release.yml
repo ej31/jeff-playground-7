@@ -1,0 +1,37 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'  # node 버전을 지정
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Release
+        # [semantic-release]를 실행하여 버전, 태그, changelog, GitHub release를 자동 생성
+        run: npx semantic-release
+
+      - name: Print version
+        if: always()
+        run: echo "semantic-release finished."
+
+
