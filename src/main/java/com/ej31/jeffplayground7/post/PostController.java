@@ -1,7 +1,9 @@
 package com.ej31.jeffplayground7.post;
 
+import com.ej31.jeffplayground7.common.dto.ApiResponse;
 import com.ej31.jeffplayground7.post.dto.PostRequestDto;
 import com.ej31.jeffplayground7.post.dto.PostResponseDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,9 +25,9 @@ public class PostController {
      * POST /api/posts
      */
     @PostMapping
-    public ResponseEntity<PostResponseDto> createPost(@RequestBody PostRequestDto requestDto) {
+    public ResponseEntity<ApiResponse<PostResponseDto>> createPost(@Valid @RequestBody PostRequestDto requestDto) {
         PostResponseDto response = postService.createPost(requestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response, "게시글이 성공적으로 생성되었습니다."));
     }
 
     /**
@@ -33,9 +35,9 @@ public class PostController {
      * GET /api/posts/{id}
      */
     @GetMapping("/{id}")
-    public ResponseEntity<PostResponseDto> getPost(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<PostResponseDto>> getPost(@PathVariable Long id) {
         PostResponseDto response = postService.getPost(id);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     /**
@@ -43,10 +45,10 @@ public class PostController {
      * GET /api/posts?page=0&size=10&sort=createdAt,desc
      */
     @GetMapping
-    public ResponseEntity<Page<PostResponseDto>> getAllPosts(
+    public ResponseEntity<ApiResponse<Page<PostResponseDto>>> getAllPosts(
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<PostResponseDto> response = postService.getAllPosts(pageable);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     /**
@@ -54,11 +56,11 @@ public class PostController {
      * PUT /api/posts/{id}
      */
     @PutMapping("/{id}")
-    public ResponseEntity<PostResponseDto> updatePost(
+    public ResponseEntity<ApiResponse<PostResponseDto>> updatePost(
             @PathVariable Long id,
-            @RequestBody PostRequestDto requestDto) {
+            @Valid @RequestBody PostRequestDto requestDto) {
         PostResponseDto response = postService.updatePost(id, requestDto);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(response, "게시글이 성공적으로 수정되었습니다."));
     }
 
     /**
@@ -66,8 +68,8 @@ public class PostController {
      * DELETE /api/posts/{id}
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePost(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deletePost(@PathVariable Long id) {
         postService.deletePost(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.successWithoutData("게시글이 성공적으로 삭제되었습니다."));
     }
 }

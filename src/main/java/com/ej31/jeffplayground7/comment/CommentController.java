@@ -2,6 +2,8 @@ package com.ej31.jeffplayground7.comment;
 
 import com.ej31.jeffplayground7.comment.dto.CommentRequestDto;
 import com.ej31.jeffplayground7.comment.dto.CommentResponseDto;
+import com.ej31.jeffplayground7.common.dto.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +22,11 @@ public class CommentController {
      * POST /api/posts/{postId}/comments
      */
     @PostMapping("/api/posts/{postId}/comments")
-    public ResponseEntity<CommentResponseDto> createComment(
+    public ResponseEntity<ApiResponse<CommentResponseDto>> createComment(
             @PathVariable Long postId,
-            @RequestBody CommentRequestDto requestDto) {
+            @Valid @RequestBody CommentRequestDto requestDto) {
         CommentResponseDto response = commentService.createComment(postId, requestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response, "댓글이 성공적으로 작성되었습니다."));
     }
 
     /**
@@ -32,9 +34,9 @@ public class CommentController {
      * GET /api/posts/{postId}/comments
      */
     @GetMapping("/api/posts/{postId}/comments")
-    public ResponseEntity<List<CommentResponseDto>> getCommentsByPostId(@PathVariable Long postId) {
+    public ResponseEntity<ApiResponse<List<CommentResponseDto>>> getCommentsByPostId(@PathVariable Long postId) {
         List<CommentResponseDto> response = commentService.getCommentsByPostId(postId);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     /**
@@ -42,11 +44,11 @@ public class CommentController {
      * PUT /api/comments/{id}
      */
     @PutMapping("/api/comments/{id}")
-    public ResponseEntity<CommentResponseDto> updateComment(
+    public ResponseEntity<ApiResponse<CommentResponseDto>> updateComment(
             @PathVariable Long id,
-            @RequestBody CommentRequestDto requestDto) {
+            @Valid @RequestBody CommentRequestDto requestDto) {
         CommentResponseDto response = commentService.updateComment(id, requestDto);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(response, "댓글이 성공적으로 수정되었습니다."));
     }
 
     /**
@@ -54,8 +56,8 @@ public class CommentController {
      * DELETE /api/comments/{id}
      */
     @DeleteMapping("/api/comments/{id}")
-    public ResponseEntity<Void> deleteComment(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteComment(@PathVariable Long id) {
         commentService.deleteComment(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.successWithoutData("댓글이 성공적으로 삭제되었습니다."));
     }
 }

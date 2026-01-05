@@ -1,5 +1,6 @@
 package com.ej31.jeffplayground7.post;
 
+import com.ej31.jeffplayground7.common.exception.ResourceNotFoundException;
 import com.ej31.jeffplayground7.post.dto.PostRequestDto;
 import com.ej31.jeffplayground7.post.dto.PostResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ public class PostService {
     @Transactional
     public PostResponseDto getPost(Long id) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다. id=" + id));
+                .orElseThrow(() -> new ResourceNotFoundException("게시글", id));
 
         // 조회수 증가
         post.increaseViewCount();
@@ -53,7 +54,7 @@ public class PostService {
     @Transactional
     public PostResponseDto updatePost(Long id, PostRequestDto requestDto) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다. id=" + id));
+                .orElseThrow(() -> new ResourceNotFoundException("게시글", id));
 
         post.update(requestDto.getTitle(), requestDto.getContent(), requestDto.getCategory());
 
@@ -66,7 +67,7 @@ public class PostService {
     @Transactional
     public void deletePost(Long id) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다. id=" + id));
+                .orElseThrow(() -> new ResourceNotFoundException("게시글", id));
 
         postRepository.delete(post);
     }

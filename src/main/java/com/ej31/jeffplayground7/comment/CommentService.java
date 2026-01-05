@@ -2,6 +2,7 @@ package com.ej31.jeffplayground7.comment;
 
 import com.ej31.jeffplayground7.comment.dto.CommentRequestDto;
 import com.ej31.jeffplayground7.comment.dto.CommentResponseDto;
+import com.ej31.jeffplayground7.common.exception.ResourceNotFoundException;
 import com.ej31.jeffplayground7.post.Post;
 import com.ej31.jeffplayground7.post.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class CommentService {
     @Transactional
     public CommentResponseDto createComment(Long postId, CommentRequestDto requestDto) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다. id=" + postId));
+                .orElseThrow(() -> new ResourceNotFoundException("게시글", postId));
 
         Comment comment = new Comment(requestDto.getContent(), requestDto.getAuthor(), post);
         Comment savedComment = commentRepository.save(comment);
@@ -39,7 +40,7 @@ public class CommentService {
     public List<CommentResponseDto> getCommentsByPostId(Long postId) {
         // 게시글 존재 여부 확인
         postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다. id=" + postId));
+                .orElseThrow(() -> new ResourceNotFoundException("게시글", postId));
 
         return commentRepository.findByPostId(postId)
                 .stream()
@@ -53,7 +54,7 @@ public class CommentService {
     @Transactional
     public CommentResponseDto updateComment(Long id, CommentRequestDto requestDto) {
         Comment comment = commentRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다. id=" + id));
+                .orElseThrow(() -> new ResourceNotFoundException("댓글", id));
 
         comment.update(requestDto.getContent());
 
@@ -66,7 +67,7 @@ public class CommentService {
     @Transactional
     public void deleteComment(Long id) {
         Comment comment = commentRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다. id=" + id));
+                .orElseThrow(() -> new ResourceNotFoundException("댓글", id));
 
         commentRepository.delete(comment);
     }
