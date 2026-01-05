@@ -42,7 +42,7 @@ public class CommentService {
         postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("게시글", postId));
 
-        return commentRepository.findByPostId(postId)
+        return commentRepository.findByPostIdWithPost(postId)
                 .stream()
                 .map(CommentResponseDto::new)
                 .collect(Collectors.toList());
@@ -53,7 +53,7 @@ public class CommentService {
      */
     @Transactional
     public CommentResponseDto updateComment(Long id, CommentRequestDto requestDto) {
-        Comment comment = commentRepository.findById(id)
+        Comment comment = commentRepository.findByIdWithPost(id)
                 .orElseThrow(() -> new ResourceNotFoundException("댓글", id));
 
         comment.update(requestDto.getContent());

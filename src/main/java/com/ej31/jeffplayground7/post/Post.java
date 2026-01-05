@@ -46,6 +46,7 @@ public class Post {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @org.hibernate.annotations.BatchSize(size = 100)
     private List<Comment> comments = new ArrayList<>();
 
     // 생성자
